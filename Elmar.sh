@@ -20,7 +20,10 @@ source "$SCRIPT_DIR/venv/bin/activate"
 export GRPC_VERBOSITY=ERROR
 export GLOG_minloglevel=2
 
-export OLLAMA_BASE_URL='http://galg60x.local:11434'
+# OLLAMA_BASE_URLが未定義なら定義
+if [ -z "${OLLAMA_BASE_URL}" ]; then
+    export OLLAMA_BASE_URL='http://galg60x.local:11434'
+fi
 
 # --gemini オプション判定
 if [ "$1" = "--gemini" ]; then
@@ -38,6 +41,12 @@ else
 #        echo "Using Gemini model"
         SCRIPT="Elmar.py"
     fi
+fi
+
+# SCRIPTがElmar.pyでGEMINI_API_KEYが未定義ならエラー
+if [ "$SCRIPT" = "Elmar.py" ] && [ -z "${GEMINI_API_KEY}" ]; then
+    echo "エラー: GEMINI_API_KEYが定義されていません。環境変数を設定してください。" >&2
+    exit 1
 fi
 
 # stderrだけフィルタリング、stdinは/dev/ttyから直接読む
