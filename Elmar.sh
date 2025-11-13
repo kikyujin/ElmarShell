@@ -36,8 +36,28 @@ else
         # OLLAMA版
 #        echo "Using OLLAMA model"
         SCRIPT="Elmar_ol.py"
+        
+        # モデル別のトークン数設定
+        CURRENT_MODEL="${ELMAR_MODEL:-qwen2.5-coder:7b}"
+        
+        if [ -z "${ELMAR_NUM_PREDICT}" ]; then
+            case "$CURRENT_MODEL" in
+                *:3b*)
+                    export ELMAR_NUM_PREDICT=256
+                    ;;
+                *:7b*)
+                    export ELMAR_NUM_PREDICT=512
+                    ;;
+                *:12b*)
+                    export ELMAR_NUM_PREDICT=1024
+                    ;;
+                *)
+                    export ELMAR_NUM_PREDICT=512  # デフォルト
+                    ;;
+            esac
+        fi
     else
-        # Gemmin版
+        # Gemini版
 #        echo "Using Gemini model"
         SCRIPT="Elmar.py"
     fi

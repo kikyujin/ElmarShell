@@ -13,6 +13,7 @@ import requests
 # 使用するモデル（環境変数で変更可能）
 DEFAULT_MODEL = os.getenv('ELMAR_MODEL', 'qwen2.5-coder:7b')
 OLLAMA_BASE_URL = os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434')
+NUM_PREDICT = int(os.getenv('ELMAR_NUM_PREDICT', '512'))  # トークン数
 
 def ask_ollama(user_input):
     prompt = f"""あなたはシェルコマンドの専門家です。
@@ -41,7 +42,7 @@ def ask_ollama(user_input):
         # "format": "json",  # これを削除
         "options": {
             "temperature": 0.2,
-            "num_predict": 200  # トークン数制限
+            "num_predict": NUM_PREDICT  # 環境変数から設定
         }
     }
     
@@ -122,8 +123,10 @@ def main():
         print("\n自然言語で指示してくれたら、ボクが解釈してシェルスクリプト作るよ〜🌱")
         print(f"\n現在のモデル: {DEFAULT_MODEL}")
         print(f"接続先: {OLLAMA_BASE_URL}")
+        print(f"トークン数: {NUM_PREDICT}")
         print("\nモデルを変更: export ELMAR_MODEL='gemma3:4b'")
         print("接続先を変更: export OLLAMA_BASE_URL='http://192.168.1.100:11434'")
+        print("トークン数を変更: export ELMAR_NUM_PREDICT='1024'")
         return
     
     user_input = ' '.join(sys.argv[1:])
